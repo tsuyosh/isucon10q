@@ -252,25 +252,18 @@ return function (App $app) {
 
         try {
             $pdo->beginTransaction();
-            $stmt = $pdo->prepare('SELECT * FROM chair WHERE id = :id AND stock > 0 FOR UPDATE');
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-            $chair = $stmt->fetchObject(Chair::class);
-
-            if (!$chair) {
-                $pdo->rollBack();
-                $this->get('logger')->info(sprintf('buyChair chair id "%s" not found', $id));
-                return $response->withStatus(StatusCodeInterface::STATUS_NOT_FOUND);
-            }
-
-            $stmt = $pdo->prepare('UPDATE chair SET stock = stock - 1 WHERE id = :id');
+            $stmt = $pdo->prepare('UPDATE chair SET stock = stock - 1 WHERE id = :id AND stock > 0');
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             if (!$stmt->execute()) {
                 $pdo->rollBack();
                 $this->get('logger')->error('chair stock update failed');
                 return $response->withStatus(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR);
             }
-
+            if ($stmt->rowCount() != 1) {
+                $pdo->rollBack();
+                $this->get('logger')->info(sprintf('buyChair chair id "%s" not found', $id));
+                return $response->withStatus(StatusCodeInterface::STATUS_NOT_FOUND);
+            }
             $pdo->commit();
         } catch (PDOException $e) {
             $pdo->rollBack();
