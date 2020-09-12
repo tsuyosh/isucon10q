@@ -45,6 +45,7 @@ return function (App $app) {
             '../../mysql/db/0_Schema.sql',
             '../../mysql/db/1_DummyEstateData.sql',
             '../../mysql/db/2_DummyChairData.sql',
+            '../../mysql/db/3_AddLocationToEstate.sql',
         ];
 
         foreach ($paths as $path) {
