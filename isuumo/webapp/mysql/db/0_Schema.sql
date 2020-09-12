@@ -19,6 +19,8 @@ CREATE TABLE isuumo.estate
     features    VARCHAR(64)         NOT NULL,
     popularity  INTEGER             NOT NULL
 );
+CREATE INDEX estate_popularity_id ON isuumo.estate (popularity DESC, id ASC);
+CREATE INDEX estate_rent_id ON isuumo.estate (rent ASC, id ASC);
 
 CREATE TABLE isuumo.chair
 (
@@ -36,3 +38,5 @@ CREATE TABLE isuumo.chair
     popularity  INTEGER         NOT NULL,
     stock       INTEGER         NOT NULL
 );
+CREATE INDEX chair_popularity_id ON isuumo.chair (popularity DESC, id ASC);
+CREATE INDEX chair_price_id ON isuumo.chair (price ASC, id ASC);
